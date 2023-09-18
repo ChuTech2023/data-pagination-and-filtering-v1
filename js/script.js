@@ -14,17 +14,32 @@ For assistance:
 
 
 /*
-Create the `showPage` function
-This function will create and insert/append the elements needed to display a "page" of nine students
+Created `showPage` function to populate the student list with list items
+This functiom receives an array of students and the page number
+to create and insert/append the elements needed to display a "page" of nine students
 */
 
+//function determines what data to show on the currect page
 const showPage = (list, page) => {
    let startIndex = (page * 9) - 9;
    let endIndex = page * 9;
    let studentList = document.querySelector('.student-list');
    studentList.innerHTML = '';
 
-   for (let i = startIndex; i < endIndex; i++) {
+   //Checking if the list of students is empty and it if its empty it shows 'No results found'
+   if (list.length <= 0) {
+      studentList.innerHTML = "No results found";
+   }
+
+   //loop over the list of students array established for current page 
+   for (let i = startIndex; i < list.length; i++) {
+
+      //stop on page limit
+      if (i >= endIndex) {
+         return
+      }
+
+      //for each student create an li with required info and add to the student list element
       let student = list[i];
       let li = `
          <li class="student-item cf">
@@ -42,10 +57,37 @@ const showPage = (list, page) => {
    }
 }
 
+// we filter student list
+const filterStudentList = () => {
+   let keyword = document.querySelector('#search').value;
+   const newList = data.filter((student) => {
+      let name = `${student.name.first} ${student.name.last}`;
+      return name.toLowerCase().includes(keyword.toLowerCase());
+   });
+   showPage(newList, 1);
+   addPagination(newList);
+}
+
+// showSearch function to render the search bar
+const showSearch = () => {
+   const header = document.querySelector("header");
+   const searchHtml = `
+      <label for="search" class="student-search">
+            <span>Search by name</span>
+            <input id="search" placeholder="Search by name...">
+            <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+      </label>
+      ` ;
+   header.insertAdjacentHTML('beforeend', searchHtml);
+   document.querySelector('.student-search button').addEventListener('click', filterStudentList);
+   document.querySelector('.student-search input').addEventListener('keyup', filterStudentList);
+}
+
+
 
 
 /*
-Create the `addPagination` function
+`addPagination` function
 This function will create and insert/append the elements needed for the pagination buttons
 */
 const addPagination = (list) => {
@@ -59,13 +101,16 @@ const addPagination = (list) => {
             <button type="button">${i}</button>
          </li>
       `;
-      linkList.insertAdjacentHTML('beforeend', li); 
+      linkList.insertAdjacentHTML('beforeend', li);
    }
- const buttons = document.querySelectorAll('.link-list button');
-   buttons[0].classList.add('active');
+   const buttons = document.querySelectorAll('.link-list button');
+
+   // using optional chaining ? to add the class active when only the button exist
+   // source https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+   buttons[0]?.classList.add('active');
    linkList.addEventListener('click', (event) => {
       if (event.target.type === 'button') {
-         buttons.forEach( (btn) => {
+         buttons.forEach((btn) => {
             btn.classList.remove('active');
          })
          event.target.classList.add('active');
@@ -77,4 +122,5 @@ const addPagination = (list) => {
 
 // Call functions
 showPage(data, 1);
+showSearch();
 addPagination(data);
