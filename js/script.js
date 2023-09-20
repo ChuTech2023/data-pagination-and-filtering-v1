@@ -15,7 +15,7 @@ For assistance:
 
 /*
 Created `showPage` function to populate the student list with list items
-This functiom receives an array of students and the page number
+This function receives an array of students and the page number
 to create and insert/append the elements needed to display a "page" of nine students
 */
 
